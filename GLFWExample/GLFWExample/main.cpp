@@ -5,17 +5,20 @@
 // vertex shader source code
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location=0) in vec3 aPos;\n"
+"out vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
-    "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1);\n"
+    "gl_Position = vec4(aPos, 1);\n"
+    "vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n" // specify a color output to the fragment shader
 "}\0";
 
 // fragment shader source code
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
+"in vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
-    "FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "FragColor = vertexColor;\n"
 "}\n\0";
 
 
@@ -104,29 +107,34 @@ int main()
     
     // defining the vertices - preparing data for vertex shader
     float vertices[] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f
     };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
+//    float vertices[] = {
+//         0.5f,  0.5f, 0.0f,  // top right
+//         0.5f, -0.5f, 0.0f,  // bottom right
+//        -0.5f, -0.5f, 0.0f,  // bottom left
+//        -0.5f,  0.5f, 0.0f   // top left
+//    };
+//    unsigned int indices[] = {  // note that we start from 0!
+//        0, 1, 3,  // first Triangle
+//        1, 2, 3   // second Triangle
+//    };
     
     // VBOs and VAOs manage that memory
-    unsigned int VBO, VAO, EBO;
+    unsigned int VBO, VAO/*, EBO*/;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+//    glGenBuffers(1, &EBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(VAO);
     
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     // Specify what the input data means by specifying the vertex attributes. input data can contain any form of data and we need to explicitly tell openGL what that data means
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3* sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -165,7 +173,7 @@ int main()
 //    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     
     // uncomment this call to draw in wireframe polygons.
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
     // Render loop
     while(!glfwWindowShouldClose(window))
@@ -180,8 +188,8 @@ int main()
         // Drawing a triangle
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-//        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
         // get pixel data from back buffer to the front buffer (display)
         glfwSwapBuffers(window);
@@ -191,7 +199,7 @@ int main()
     // Delete VAOs and VBOs once purpose is served
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+//    glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
     
     
