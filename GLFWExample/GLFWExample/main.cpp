@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -15,10 +16,11 @@ const char* vertexShaderSource = "#version 330 core\n"
 // fragment shader source code
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
-"in vec4 vertexColor;\n"
+//"in vec4 vertexColor;\n"
+"uniform vec4 ourColor;\n"
 "void main()\n"
 "{\n"
-    "FragColor = vertexColor;\n"
+    "FragColor = ourColor;\n"
 "}\n\0";
 
 
@@ -187,6 +189,12 @@ int main()
         
         // Drawing a triangle
         glUseProgram(shaderProgram);
+        
+        float timeValue = glfwGetTime();
+        float greenValue = (std::sin(timeValue) / 2.f) + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 //        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
