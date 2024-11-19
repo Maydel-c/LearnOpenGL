@@ -6,11 +6,12 @@
 // vertex shader source code
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location=0) in vec3 aPos;\n"
+"layout (location=1) in vec4 ourColor;\n"
 "out vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
     "gl_Position = vec4(aPos, 1);\n"
-    "vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n" // specify a color output to the fragment shader
+    "vertexColor = ourColor;\n" // specify a color output to the fragment shader
 "}\0";
 
 // fragment shader source code
@@ -109,9 +110,9 @@ int main()
     
     // defining the vertices - preparing data for vertex shader
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.f, 0.f,
+        0.5f, -0.5f, 0.0f, 0.f, 1.f, 0.f,
+        0.0f, 0.5f, 0.0f, 0.f, 0.f, 1.f
     };
 //    float vertices[] = {
 //         0.5f,  0.5f, 0.0f,  // top right
@@ -130,6 +131,7 @@ int main()
     glGenBuffers(1, &VBO);
 //    glGenBuffers(1, &EBO);
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+    // fill a VBO, configure vertex attribute pointers and store it all in a VAO.
     glBindVertexArray(VAO);
     
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -138,7 +140,7 @@ int main()
 //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     // Specify what the input data means by specifying the vertex attributes. input data can contain any form of data and we need to explicitly tell openGL what that data means
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3* sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6* sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
