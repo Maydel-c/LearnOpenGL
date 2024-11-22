@@ -66,6 +66,9 @@ int main()
     
     Shader ourShader("./3.3.shader.vs", "./3.3.shader.fs"); // set edit scheme > options > current directory to your directory
     
+    float offset = 0.5f;
+//    ourShader.setFloat("xOffset", 10.f);
+    
     float vertices[] = {
        // positions         // colors
         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
@@ -173,6 +176,7 @@ int main()
         glUseProgram(shaderProgram);
          */
         ourShader.use();
+        ourShader.setFloat("xOffset", offset);
         
         /*
         float timeValue = glfwGetTime();
