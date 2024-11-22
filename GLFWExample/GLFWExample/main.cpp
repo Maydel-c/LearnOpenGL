@@ -2,9 +2,9 @@
 #include <cmath>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Shader.hpp"
+#include "shader_s.h"
 
-
+/*
 // vertex shader source code
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location=0) in vec3 aPos;\n"
@@ -24,13 +24,18 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "{\n"
     "FragColor = vec4(ourColor, 1.0f);\n"
 "}\n\0";
-
+*/
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
+// settings
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
+
 int main()
 {
+
     // Initializing GLFW version
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -39,7 +44,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   
     // Initializing GLFW window
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -57,14 +62,21 @@ int main()
     }
     
     
- //===============================================================
-
-    // 1. allocating memory on GPU
-    // 2. sending data to that memory oon GPU
-    // 3. Configure opengl to interpret the data on that memory
-
-    // 1. Write the vertex shader using GLSL language
-    // 2. Compile this shader (after creating a shader object AND attaching it to source shader source code)
+//===============================================================
+    
+    Shader ourShader("./3.3.shader.vs", "./3.3.shader.fs"); // set edit scheme > options > current directory to your directory
+    
+    float vertices[] = {
+       // positions         // colors
+        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
+       -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
+        0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top
+   };
+    
+    
+    
+//===============================================================
+    /*
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
@@ -115,16 +127,7 @@ int main()
         0.5f, -0.5f, 0.0f, 0.f, 1.f, 0.f,
         0.0f, 0.5f, 0.0f, 0.f, 0.f, 1.f
     };
-//    float vertices[] = {
-//         0.5f,  0.5f, 0.0f,  // top right
-//         0.5f, -0.5f, 0.0f,  // bottom right
-//        -0.5f, -0.5f, 0.0f,  // bottom left
-//        -0.5f,  0.5f, 0.0f   // top left
-//    };
-//    unsigned int indices[] = {  // note that we start from 0!
-//        0, 1, 3,  // first Triangle
-//        1, 2, 3   // second Triangle
-//    };
+    */
     
     // VBOs and VAOs manage that memory
     unsigned int VBO, VAO/*, EBO*/;
@@ -147,42 +150,13 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6* sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
     
+    /*
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-    
-//    // Using the shader program. Every shader and rendering call after glUseProgram will now use this program object (and thus the shaders).
-//    glUseProgram(shaderProgram);
-    
-//    // Delete the shaders as now we only need the shader program
-//    glDeleteShader(vertexShader);
-//    glDeleteShader(fragmentShader);
-    
-    
-    
-    // Summary of above: we initialized the vertex data in a buffer using a vertex buffer object, set up a vertex and fragment shader and told OpenGL how to link the vertex data to the vertex shader's vertex attributes.
-    
-    // Vertex array objects (VAOs) automatically configure attributes of vertex data once the first one is configured. They are bound just like VBOs
-//    unsigned int VAO;
-//    glGenVertexArrays(1, &VAO);
-//    glBindVertexArray(VAO);
-    
-    
-    // Summary 2: Usually when you have multiple objects you want to draw, you first generate/configure all the VAOs (and thus the required VBO and attribute pointers) and store those for later use. The moment we want to draw one of our objects, we take the corresponding VAO, bind it, then draw the object and unbind the VAO again.
-    
-    
-    
-   //====================================================================================
-    
-    
-//    // Setting the viewport
-//    glViewport(0, 0, 800, 600);
-//
-//    // Enabling the functionality for changing window dimensions
-//
-//    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    */
     
     // uncomment this call to draw in wireframe polygons.
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
     // Render loop
     while(!glfwWindowShouldClose(window))
@@ -195,16 +169,21 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         
         // Drawing a triangle
+        /*
         glUseProgram(shaderProgram);
+         */
+        ourShader.use();
         
+        /*
         float timeValue = glfwGetTime();
         float greenValue = (std::sin(timeValue) / 2.f) + 0.5f;
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        */
         
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
-//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+//      glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
         // get pixel data from back buffer to the front buffer (display)
         glfwSwapBuffers(window);
@@ -214,8 +193,10 @@ int main()
     // Delete VAOs and VBOs once purpose is served
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-//    glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
+//   glDeleteBuffers(1, &EBO);
+     /*
+     glDeleteProgram(shaderProgram);
+     */
     
     
     // clean/delete all of GLFW's resources when loop ends
